@@ -23,7 +23,7 @@ export const getAutos = () => api.get('/autos');
 export const getAutoById = (id) => api.get(`/autos/${id}`);
 
 // API Admin - Autenticación
-export const loginAdmin = (username, password) => 
+export const loginAdmin = (username, password) =>
   api.post('/auth/login', { username, password });
 
 // API Admin - CRUD Autos
