@@ -7,7 +7,7 @@ import {
   deleteAuto
 } from '../services/api';
 import Modal from '../components/Modal';
-import { LockIcon, RefreshIcon, EditIcon, TrashIcon, StarFillIcon, SearchIcon } from '../components/Icons';
+import { LockIcon, RefreshIcon, EditIcon, TrashIcon, StarFillIcon, SearchIcon, ExternalLinkIcon } from '../components/Icons';
 import './AdminPanel.css';
 
 function AdminPanel() {
@@ -20,6 +20,7 @@ function AdminPanel() {
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', type: 'info' });
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, id: null });
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilter, setActiveFilter] = useState('todos'); // 'todos', 'disponibles', 'destacados'
   const itemsPerPage = 10;
 
   const [formData, setFormData] = useState({
@@ -49,11 +50,14 @@ function AdminPanel() {
     password: ''
   });
 
+
   // Estado para las estadísticas
   const [stats, setStats] = useState({
     total: 0,
     disponibles: 0,
-    destacados: 0
+    destacados: 0,
+    reservados: 0,
+    vendidos: 0
   });
 
   useEffect(() => {
@@ -104,8 +108,10 @@ function AdminPanel() {
       const total = autosData.length;
       const disponibles = autosData.filter(auto => auto.estado === 'Disponible').length;
       const destacados = autosData.filter(auto => auto.destacado).length;
+      const reservados = autosData.filter(auto => auto.estado === 'Reservado').length;
+      const vendidos = autosData.filter(auto => auto.estado === 'Vendido').length;
 
-      setStats({ total, disponibles, destacados });
+      setStats({ total, disponibles, destacados, reservados, vendidos });
     } catch (error) {
       console.error('Error al cargar autos:', error);
       if (error.response?.status === 401) {
@@ -257,15 +263,44 @@ function AdminPanel() {
     }
   };
 
+  const togglePublicado = async (auto) => {
+    try {
+      setLoading(true);
+      await updateAuto(auto._id, { ...auto, publicado: !auto.publicado });
+      cargarAutos();
+      showModal('Éxito', `Auto ${!auto.publicado ? 'publicado' : 'despublicado'}`, 'success');
+    } catch (error) {
+      showModal('Error', 'Error al actualizar el estado de publicación: ' + (error.response?.data?.message || error.message), 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   // Pagination logic
   const filteredAutos = autos.filter(auto => {
     const search = searchTerm.toLowerCase();
-    return (
+    const matchesSearch = (
       auto.marca.toLowerCase().includes(search) ||
       auto.modelo.toLowerCase().includes(search) ||
       auto.año.toString().includes(search) ||
       auto.color.toLowerCase().includes(search)
     );
+
+    // Aplicar filtro activo
+    let matchesFilter = true;
+    if (activeFilter === 'disponibles') {
+      matchesFilter = auto.estado === 'Disponible';
+    } else if (activeFilter === 'destacados') {
+      matchesFilter = auto.destacado === true;
+    } else if (activeFilter === 'reservados') {
+      matchesFilter = auto.estado === 'Reservado';
+    } else if (activeFilter === 'vendidos') {
+      matchesFilter = auto.estado === 'Vendido';
+    }
+    // Si es 'todos', matchesFilter permanece true
+
+    return matchesSearch && matchesFilter;
   });
 
   const totalPages = Math.ceil(filteredAutos.length / itemsPerPage);
@@ -362,6 +397,10 @@ function AdminPanel() {
               <RefreshIcon size={20} />
               Actualizar
             </button>
+            <a href="/" className="btn-view-page" target="_blank" rel="noopener noreferrer">
+              <ExternalLinkIcon size={20} />
+              Ver Página
+            </a>
           </div>
 
           {showForm && (
@@ -612,15 +651,51 @@ function AdminPanel() {
           <div className="admin-autos-list">
             <div className="admin-list-header">
               <div className="header-stats">
-                <h2>Autos ({stats.total})</h2>
-                <div className="stat-badge">
-                  <span className="stat-label">Disponibles:</span>
-                  <span className="stat-value">{stats.disponibles}</span>
-                </div>
-                <div className="stat-badge">
-                  <span className="stat-label">Destacados:</span>
-                  <span className="stat-value">{stats.destacados}</span>
-                </div>
+                <button
+                  className={`filter-btn ${activeFilter === 'todos' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveFilter('todos');
+                    setCurrentPage(1);
+                  }}
+                >
+                  Todos ({stats.total})
+                </button>
+                <button
+                  className={`filter-btn ${activeFilter === 'disponibles' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveFilter('disponibles');
+                    setCurrentPage(1);
+                  }}
+                >
+                  Disponibles ({stats.disponibles})
+                </button>
+                <button
+                  className={`filter-btn ${activeFilter === 'destacados' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveFilter('destacados');
+                    setCurrentPage(1);
+                  }}
+                >
+                  Destacados ({stats.destacados})
+                </button>
+                <button
+                  className={`filter-btn ${activeFilter === 'reservados' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveFilter('reservados');
+                    setCurrentPage(1);
+                  }}
+                >
+                  Reservados ({stats.reservados})
+                </button>
+                <button
+                  className={`filter-btn ${activeFilter === 'vendidos' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveFilter('vendidos');
+                    setCurrentPage(1);
+                  }}
+                >
+                  Vendidos ({stats.vendidos})
+                </button>
               </div>
               <div className="admin-search">
                 <div className="search-wrapper">
@@ -684,12 +759,21 @@ function AdminPanel() {
                               disabled={loading}
                               title="Seleccionar estado"
                             >
-                              <option value="Disponible">Disponible</option>
-                              <option value="Reservado">Reservado</option>
-                              <option value="Vendido">Vendido</option>
+                              <option value="Disponible" className="option-disponible">Disponible</option>
+                              <option value="Reservado" className="option-reservado">Reservado</option>
+                              <option value="Vendido" className="option-vendido">Vendido</option>
                             </select>
                           </td>
-                          <td>{auto.publicado ? '✓' : '✗'}</td>
+                          <td>
+                            <button
+                              onClick={() => togglePublicado(auto)}
+                              className={`published-btn ${auto.publicado ? 'published' : 'unpublished'}`}
+                              title={auto.publicado ? 'Despublicar auto' : 'Publicar auto'}
+                              disabled={loading}
+                            >
+                              {auto.publicado ? '✓' : '✗'}
+                            </button>
+                          </td>
                           <td>
                             <button
                               onClick={() => toggleFeatured(auto)}

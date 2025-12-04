@@ -36,7 +36,7 @@ function Catalogo() {
   useEffect(() => {
     // Guardar la posición del scroll antes de que cambien los filtros
     scrollPositionRef.current = window.scrollY || window.pageYOffset;
-    
+
     // Restaurar la posición después de que React actualice el DOM
     const timeoutId = setTimeout(() => {
       if (scrollPositionRef.current > 0) {
@@ -46,7 +46,7 @@ function Catalogo() {
         });
       }
     }, 10);
-    
+
     return () => clearTimeout(timeoutId);
   }, [filtros, ordenarPor]);
 
@@ -70,26 +70,26 @@ function Catalogo() {
   const autosFiltrados = autos.filter(auto => {
     // Búsqueda general por marca, modelo, año, color, versión
     const search = filtros.marcaBusqueda.toLowerCase();
-    const cumpleBusqueda = !filtros.marcaBusqueda || 
+    const cumpleBusqueda = !filtros.marcaBusqueda ||
       auto.marca.toLowerCase().includes(search) ||
       auto.modelo.toLowerCase().includes(search) ||
       auto.año.toString().includes(search) ||
       (auto.color && auto.color.toLowerCase().includes(search)) ||
       (auto.version && auto.version.toLowerCase().includes(search));
-    
+
     const cumpleMarca = filtros.marcas.length === 0 || filtros.marcas.includes(auto.marca);
     const cumpleCombustible = filtros.combustibles.length === 0 || filtros.combustibles.includes(auto.combustible);
     const cumpleTransmision = filtros.transmisiones.length === 0 || filtros.transmisiones.includes(auto.transmision);
     const cumplePrecioMin = !filtros.precioMin || auto.precio >= parseFloat(filtros.precioMin);
     const cumplePrecioMax = !filtros.precioMax || auto.precio <= parseFloat(filtros.precioMax);
     const cumpleMoneda = filtros.monedas.length === 0 || filtros.monedas.includes(auto.moneda || 'ARS');
-    
+
     return cumpleBusqueda && cumpleMarca && cumpleCombustible && cumpleTransmision && cumplePrecioMin && cumplePrecioMax && cumpleMoneda;
   });
 
   const autosOrdenados = [...autosFiltrados].sort((a, b) => {
     if (!ordenarPor) return 0;
-    
+
     switch (ordenarPor) {
       case 'precio-asc':
         return a.precio - b.precio;
@@ -118,12 +118,16 @@ function Catalogo() {
   const cambiarPagina = (nuevaPagina) => {
     if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
     setPaginaActual(nuevaPagina);
-    const catalogoSection = document.getElementById('catalogo');
-    if (catalogoSection) {
-      const rect = catalogoSection.getBoundingClientRect();
-      const offsetTop = window.pageYOffset + rect.top - 120;
-      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-    }
+
+    // Usar setTimeout para asegurar que el DOM se actualice antes del scroll
+    setTimeout(() => {
+      const autosGrid = document.getElementById('autos-grid-container');
+      if (autosGrid) {
+        const rect = autosGrid.getBoundingClientRect();
+        const offsetTop = window.pageYOffset + rect.top - 100;
+        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   useEffect(() => {
@@ -137,7 +141,7 @@ function Catalogo() {
       <QuienesSomos />
       <AutosDestacados />
       <PorQueElegirnos />
-      
+
       <section id="catalogo" className="catalogo-section">
         <div className="container">
           <div className="section-header">
@@ -151,7 +155,7 @@ function Catalogo() {
           <div className="catalogo-container">
             <aside className="filtros">
               <h3 className="filtros-title">Filtros</h3>
-              
+
               <div className="filtro-group">
                 <label className='label-titulos'>Ordenar por</label>
                 <select
@@ -196,7 +200,7 @@ function Catalogo() {
                   ))}
                 </div>
               </div>
-              
+
               <div className="filtro-group">
                 <label className='label-titulos'>Precio</label>
                 <div className="precio-range">
@@ -302,7 +306,7 @@ function Catalogo() {
                     marcaBusqueda: '',
                     marcas: [],
                     combustibles: [],
-                    transmisiones: [], 
+                    transmisiones: [],
                     precioMin: '',
                     precioMax: '',
                     monedas: []
@@ -315,7 +319,7 @@ function Catalogo() {
               </button>
             </aside>
 
-            <main className="autos-grid">
+            <main id="autos-grid-container" className="autos-grid">
               {loading ? (
                 <div className="loading">Cargando autos...</div>
               ) : error ? (
@@ -334,19 +338,19 @@ function Catalogo() {
                       />
                     </div>
                   </div>
-                  
+
                   {autosOrdenados.length === 0 ? (
                     <div className="no-results">No se encontraron autos con los filtros seleccionados</div>
                   ) : (
                     <>
-                    <div className="autos-list">
+                      <div className="autos-list">
                         {autosPaginados.map(auto => (
-                        <AutoCard 
-                          key={auto._id} 
-                          auto={auto}
-                        />
-                      ))}
-                    </div>
+                          <AutoCard
+                            key={auto._id}
+                            auto={auto}
+                          />
+                        ))}
+                      </div>
                       {totalPaginas > 1 && (
                         <div className="pagination">
                           <button

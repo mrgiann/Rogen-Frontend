@@ -361,8 +361,9 @@
 }
 
 .admin-autos-list h2 {
-  color: var(--color-primary);
+  color: var(--color-text);
   margin: 0;
+  font-size: 1.3rem;
 }
 
 .admin-search {
@@ -727,4 +728,127 @@
   text-align: center;
   padding: 4px;
   line-height: 1.2;
+}
+
+/* Botón de publicado/despublicado */
+.published-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.20s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  padding: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.published-btn:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+}
+
+.published-btn:active {
+  transform: scale(0.92);
+}
+
+.published-btn.published {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
+}
+
+.published-btn.unpublished {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35);
+}
+
+.published-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Estilos para las opciones del select de estado */
+select.status-select option {
+  padding: 8px;
+  font-weight: 600;
+}
+
+select.status-select option.option-disponible {
+  background: #d6f5df;
+  color: #0e6c36;
+}
+
+select.status-select option.option-reservado {
+  background: #fff4cc;
+  color: #8a6d1e;
+}
+
+select.status-select option.option-vendido {
+  background: #f7d4d8;
+  color: #8a1a28;
+}
+
+/* Botón Ver Página */
+.btn-view-page {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #10b981;
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-view-page:hover {
+  background: #059669;
+}
+
+.btn-view-page svg {
+  flex-shrink: 0;
+}
+
+/* Botones de filtro */
+.filter-btn {
+  padding: 0.5rem 0.9rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f8f9fa;
+  color: #6c757d;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-btn.active:hover {
+  background: var(--color-primary-dark, #5568d3);
+  border-color: var(--color-primary-dark, #5568d3);
 }
