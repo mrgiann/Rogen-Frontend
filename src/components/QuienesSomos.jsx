@@ -40,19 +40,19 @@ function QuienesSomos() {
 
             <div className="features-list">
               <div className="feature-item">
-                <CheckCircleIcon size={24} color="var(--color-accent)" />
+                <CheckCircleIcon size={22} color="var(--color-accent)" />
                 <span>Vehículos inspeccionados y certificados</span>
               </div>
               <div className="feature-item">
-                <CheckCircleIcon size={24} color="var(--color-accent)" />
+                <CheckCircleIcon size={22} color="var(--color-accent)" />
                 <span>Asesoramiento personalizado</span>
               </div>
               <div className="feature-item">
-                <CheckCircleIcon size={24} color="var(--color-accent)" />
+                <CheckCircleIcon size={22} color="var(--color-accent)" />
                 <span>Financiación a tu medida</span>
               </div>
               <div className="feature-item">
-                <CheckCircleIcon size={24} color="var(--color-accent)" />
+                <CheckCircleIcon size={22} color="var(--color-accent)" />
                 <span>Garantía en todos nuestros autos</span>
               </div>
             </div>
