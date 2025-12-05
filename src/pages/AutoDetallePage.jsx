@@ -144,6 +144,11 @@ function AutoDetallePage() {
                       ›
                     </button>
                   )}
+                  {imagenes.length > 1 && (
+                    <div className="carousel-indicator">
+                      {currentImageIndex + 1} / {imagenes.length}
+                    </div>
+                  )}
                 </div>
                 {imagenes.length > 1 && (
                   <div className="carousel-thumbnails">
@@ -159,11 +164,7 @@ function AutoDetallePage() {
                     ))}
                   </div>
                 )}
-                {imagenes.length > 1 && (
-                  <div className="carousel-indicator">
-                    {currentImageIndex + 1} / {imagenes.length}
-                  </div>
-                )}
+
               </div>
             ) : (
               <div className="no-image-large">
@@ -253,9 +254,9 @@ function AutoDetallePage() {
                       <div className="feature-group">
                         <h4>Principales</h4>
                         <ul>
-                          {auto.puertas && <li><strong>Puertas:</strong> {auto.puertas}</li>}
-                          {auto.motor && <li><strong>Motor:</strong> {auto.motor}</li>}
-                          {auto.tipoCarroceria && <li><strong>Carrocería:</strong> {auto.tipoCarroceria}</li>}
+                          {auto.puertas && <li><strong>Puertas:</strong>{' '}{auto.puertas}</li>}
+                          {auto.motor && <li><strong>Motor:</strong>{' '}{auto.motor}</li>}
+                          {auto.tipoCarroceria && <li><strong>Carrocería:</strong>{' '}{auto.tipoCarroceria}</li>}
                         </ul>
                       </div>
                     )}
@@ -287,7 +288,7 @@ function AutoDetallePage() {
                       <div className="feature-group">
                         <h4>Información General</h4>
                         <ul>
-                          {auto.direccion && <li><strong>Dirección:</strong> {auto.direccion}</li>}
+                          {auto.direccion && <li><strong>Dirección:</strong>{' '}{auto.direccion}</li>}
                           {auto.alarma && <li>Alarma</li>}
                         </ul>
                       </div>
@@ -298,11 +299,11 @@ function AutoDetallePage() {
                       <div className="feature-group">
                         <h4>Rendimiento</h4>
                         <ul>
-                          {auto.potencia && <li><strong>Potencia:</strong> {auto.potencia}</li>}
-                          {auto.capacidadPersonas && <li><strong>Capacidad:</strong> {auto.capacidadPersonas} personas</li>}
-                          {auto.capacidadTanque && <li><strong>Tanque:</strong> {auto.capacidadTanque}</li>}
-                          {auto.distanciaEjes && <li><strong>Distancia ejes:</strong> {auto.distanciaEjes}</li>}
-                          {auto.valvulasPorCilindro && <li><strong>Válvulas:</strong> {auto.valvulasPorCilindro}</li>}
+                          {auto.potencia && <li><strong>Potencia:</strong>{' '}{auto.potencia}</li>}
+                          {auto.capacidadPersonas && <li><strong>Capacidad:</strong>{' '}{auto.capacidadPersonas} personas</li>}
+                          {auto.capacidadTanque && <li><strong>Tanque:</strong>{' '}{auto.capacidadTanque}</li>}
+                          {auto.distanciaEjes && <li><strong>Distancia ejes:</strong>{' '}{auto.distanciaEjes}</li>}
+                          {auto.valvulasPorCilindro && <li><strong>Válvulas:</strong>{' '}{auto.valvulasPorCilindro}</li>}
                           {auto.controlTraccion && <li>Control de tracción</li>}
                         </ul>
                       </div>
@@ -324,9 +325,9 @@ function AutoDetallePage() {
                       <div className="feature-group">
                         <h4>Dimensiones</h4>
                         <ul>
-                          {auto.largo && <li><strong>Largo:</strong> {auto.largo}</li>}
-                          {auto.altura && <li><strong>Altura:</strong> {auto.altura}</li>}
-                          {auto.ancho && <li><strong>Ancho:</strong> {auto.ancho}</li>}
+                          {auto.largo && <li><strong>Largo:</strong>{' '}{auto.largo}</li>}
+                          {auto.altura && <li><strong>Altura:</strong>{' '}{auto.altura}</li>}
+                          {auto.ancho && <li><strong>Ancho:</strong>{' '}{auto.ancho}</li>}
                         </ul>
                       </div>
                     )}
