@@ -4,7 +4,8 @@ import {
   getAutosAdmin,
   createAuto,
   updateAuto,
-  deleteAuto
+  deleteAuto,
+  uploadImages
 } from '../services/api';
 import Modal from '../components/Modal';
 import { LockIcon, RefreshIcon, EditIcon, TrashIcon, StarFillIcon, SearchIcon, ExternalLinkIcon, ChevronDownIcon, ChevronUpIcon } from '../components/Icons';
@@ -144,44 +145,23 @@ function AdminPanel() {
     }
   };
 
-  const uploadImageToImgBB = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    // NOTA: Necesitas obtener tu propia clave API gratuita en https://api.imgbb.com/
-    // Reemplaza la clave de ejemplo con tu clave real
-    const apiKey = '6673449535d4618aa72a22cf638256dc'; // Clave de ejemplo - reemplazar con tu clave
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-      method: 'POST',
-      body: formData
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      return data.data.url;
-    } else {
-      throw new Error(data.error?.message || 'Error al subir imagen');
-    }
-  };
-
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
     try {
       setUploadingImages(true);
-      const uploadedUrls = await Promise.all(
-        files.map(file => uploadImageToImgBB(file))
-      );
+      const response = await uploadImages(files);
+      const uploadedUrls = response.data.urls;
 
       // Combinar URLs existentes con las nuevas
       const existingUrls = formData.imagenes ? formData.imagenes.split(',').map(url => url.trim()).filter(url => url) : [];
       const allUrls = [...existingUrls, ...uploadedUrls].join(', ');
       setFormData({ ...formData, imagenes: allUrls });
       setImageFiles([]);
-      showModal('Éxito', `${uploadedUrls.length} imagen(es) subida(s) exitosamente`, 'success');
+      showModal('Éxito', response.data.message || `${uploadedUrls.length} imagen(es) subida(s) exitosamente`, 'success');
     } catch (error) {
-      showModal('Error', 'Error al subir imágenes: ' + error.message, 'error');
+      showModal('Error', 'Error al subir imágenes: ' + (error.response?.data?.message || error.message), 'error');
     } finally {
       setUploadingImages(false);
     }

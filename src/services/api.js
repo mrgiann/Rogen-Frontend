@@ -33,5 +33,18 @@ export const createAuto = (auto) => api.post('/admin/autos', auto);
 export const updateAuto = (id, auto) => api.put(`/admin/autos/${id}`, auto);
 export const deleteAuto = (id) => api.delete(`/admin/autos/${id}`);
 
+// API Admin - Subir imágenes
+export const uploadImages = (files) => {
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('images', file);
+  });
+  return api.post('/admin/upload-images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
 export default api;
 
